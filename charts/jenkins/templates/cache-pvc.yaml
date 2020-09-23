@@ -1,0 +1,20 @@
+{{- if .Values.agent.cache.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "jenkins.fullname" . }}-cache-pvc
+  namespace: {{ template "jenkins.master.slaveKubernetesNamespace" . }}
+  labels:
+    "app.kubernetes.io/name": '{{ template "jenkins.name" . }}'
+    "helm.sh/chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
+    "app.kubernetes.io/instance": "{{ .Release.Name }}"
+    "app.kubernetes.io/component": "{{ include "jenkins.fullname" $ }}-cache-pvc"
+spec:
+  accessModes:
+    - "ReadWriteMany"
+  resources:
+    requests:
+      storage: {{ .Values.agent.cache.pvc.size }}
+  storageClassName: {{ .Values.agent.cache.pvc.storageClass | default "" }}
+{{- end }}
